@@ -8,18 +8,18 @@ var bodyParser = require('body-parser');
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'allianceserver',
-    password: '5LAP_ALLIANCE_SERVER_MYSQL',
+    user: 'root',
+    password: 'authserver',
     database: 'eve'
 });
 var app = express();
 var skillList;
 // PRODUCTION KEYS
-var ClientId = '377645b262b34c87a68bce8963ae2847';
-var Secret = 'LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf';
+/*var ClientId = '377645b262b34c87a68bce8963ae2847';
+var Secret = 'LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf';*/
 //DEV KEYS
-/*var ClientId = 'e0b65052339e436c8a53444e7174ee59';
-var Secret = '8WPWy6xpltKgXDG7j5Dsko8Jx0SU2RoKzB3UTLfC';*/
+var ClientId = 'e0b65052339e436c8a53444e7174ee59';
+var Secret = '8WPWy6xpltKgXDG7j5Dsko8Jx0SU2RoKzB3UTLfC';
 
 connection.connect(function (error) {
     if (error) {
@@ -314,11 +314,13 @@ function StringFormat(results, item, callback) {
     var htmlhead = '';
     var htmlstring = 'ItemName: ' + item;
     var hasSkills = true;
+    var foundSkill = false;
     results.forEach((result, index, array) => {
         if (result.ItemName != item)
             return;
         skillList.forEach((skill, index2, array2) => {
             if (skill['skill_id'] == result.SkillId) {
+                foundSkill = true;
                 if (hasSkills == true && skill['current_skill_level'] >= result.SkillLevel) {
                     hasSkills = true;
                 } else {
@@ -333,7 +335,7 @@ function StringFormat(results, item, callback) {
             }
         });
     });
-    if (hasSkills == true) {
+    if (hasSkills == true && foundSkill == true) {
         htmlstring = '<li><a href="#" style="color: green" class="ui-btn">' + htmlstring;
     } else {
         htmlstring = '<li><a href="#" style="color: red" class="ui-btn">' + htmlstring;

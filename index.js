@@ -15,11 +15,11 @@ var connection = mysql.createConnection({
 var app = express();
 var skillList;
 // PRODUCTION KEYS
-/*var ClientId = '377645b262b34c87a68bce8963ae2847';
-var Secret = 'LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf';*/
+var ClientId = '377645b262b34c87a68bce8963ae2847';
+var Secret = 'LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf';
 //DEV KEYS
-var ClientId = 'e0b65052339e436c8a53444e7174ee59';
-var Secret = '8WPWy6xpltKgXDG7j5Dsko8Jx0SU2RoKzB3UTLfC';
+/*var ClientId = 'e0b65052339e436c8a53444e7174ee59';
+var Secret = '8WPWy6xpltKgXDG7j5Dsko8Jx0SU2RoKzB3UTLfC';*/
 
 connection.connect(function (error) {
     if (error) {
@@ -45,13 +45,13 @@ app.use(cookieSession({
 app.get('/', function (req, res) {
     req.session.admin = false;
     // PRODUCTION URL
-    /*res.redirect('https://login.eveonline.com/oauth/authorize/?response_type=code' +
-        '&redirect_uri=http://auth.sudden-impact.online/callback&client_id=377645b262b34c87a68bce8963ae2847' +
-        '&scope=esi-skills.read_skills.v1&state=uniquestate123');*/
-    // DEV URL
     res.redirect('https://login.eveonline.com/oauth/authorize/?response_type=code' +
-        '&redirect_uri=http://127.0.0.1:3000/callback&client_id=e0b65052339e436c8a53444e7174ee59' +
+        '&redirect_uri=http://auth.sudden-impact.online/callback&client_id=377645b262b34c87a68bce8963ae2847' +
         '&scope=esi-skills.read_skills.v1&state=uniquestate123');
+    // DEV URL
+    /*res.redirect('https://login.eveonline.com/oauth/authorize/?response_type=code' +
+        '&redirect_uri=http://127.0.0.1:3000/callback&client_id=e0b65052339e436c8a53444e7174ee59' +
+        '&scope=esi-skills.read_skills.v1&state=uniquestate123');*/
 });
 
 app.get('/fits', function (req, res) {

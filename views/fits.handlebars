@@ -13,10 +13,15 @@
                             </ul>
                             <textarea id="fitJson" name="fitJson" style="height: 200px"></textarea>
                             <br>
-                            <label for="T3">Is this a Strat Cruiser?</label><input type="checkbox" id="T3" name="T3" value="true">
-                            <br>
+                            <label for="T3" style="padding: 15px 0px 15px 40px; margin: 0px auto">
+                                Is this a Strat Cruiser?
+                                <input type="checkbox" id="T3" name="T3" value="true">
+                            </label>
                             <input type="button" onclick="EditAddFit();" id="add" value="Add">
-                            <input type="button" id="delete" value="Delete">
+                            <br><br>
+                            <label for="delFit">Enter fit name to delete. Can be separated by a comma.</label>
+                            <input type="text" name="delFit" id="delFit">
+                            <input type="button" onclick="DeleteFit();" id="delete" value="Delete">
                         </div>
                         <div class="col-sm-6">
                             <h2>Fits</h2>
@@ -37,10 +42,29 @@
         console.log('function called');
         $.ajax({
             type: "POST",
-            url: '/editfit',
+            url: '/editfitlist',
             data: {
+                method: 'edit',
                 fitJson: $('#fitJson').val(),
                 T3: $('#T3').val()
+            },
+            success: function(data) {
+                if (data['response'] == '200')
+                    location.reload();
+                console.log(data);
+            },
+            dataType: 'json'
+        });
+    }
+    
+    function DeleteFit() {
+        console.log('function called');
+        $.ajax({
+            type: "POST",
+            url: '/editfitlist',
+            data: {
+                method: 'delete',
+                delFit: $('#delFit').val()
             },
             success: function(data) {
                 if (data['response'] == '200')

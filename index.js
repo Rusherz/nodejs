@@ -80,53 +80,21 @@ app.get('/', function (req, res) {
                 admin: true,
                 fit: fitJson
             });
+        } else {
+            res.render('fits');
         }
     });
 });
 
-app.post('/editfit', function (req, res) {
+app.post('/editfitlist', function (req, res) {
     if (req.method != 'POST')
         return;
-
-    var t3;
-    if (req.body.T3) {
-        t3 = 1;
-    } else {
-        t3 = 0;
+    console.log(req.body.method);
+    if (req.body.method == 'edit') {
+        EditAddFit(req, res)
+    } else if (req.body.method == 'delete') {
+        DeleteFit(req, res);
     }
-    var lines = req.body.fitJson.split('\n');
-    parseFit(lines, t3, function (data) {
-        console.log(data);
-        var UpdateQuery = "UPDATE fit SET fitJson = '" + JSON.stringify(data) + "' WHERE fitName = '" + data['FitName'] + "';";
-        connection.query(UpdateQuery, function (error, results, fields) {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            if (results['affectedRows'] == 0) {
-                var InsertQuery = "INSERT INTO fit VALUES('" + data['FitName'] + "', '" + JSON.stringify(data) + "', '" + t3 + "');";
-                connection.query(InsertQuery, function (error, results, fields) {
-                    if (error) {
-                        console.error(error);
-                        return;
-                    }
-                    for (var i = 0; i < 1000; i++) {
-                        if (i == 999) {
-                            console.log('sending 200 status');
-                            res.end(JSON.stringify({response: '200'}));
-                        }
-                    }
-                });
-            } else {
-                for (var i = 0; i < 1000; i++) {
-                    if (i == 999) {
-                        console.log('sending 200 status');
-                        res.end(JSON.stringify({response: '200'}));
-                    }
-                }
-            }
-        });
-    });
 });
 
 app.get('/skill', function (req, res) {
@@ -377,4 +345,77 @@ function parseFit(lines, t3, callback) {
         }
     });
 
+}
+
+function EditAddFit(req, res) {
+    var t3;
+    if (req.body.T3) {
+        t3 = 1;
+    } else {
+        t3 = 0;
+    }
+    var lines = req.body.fitJson.split('\n');
+    parseFit(lines, t3, function (data) {
+        console.log('data: ' + data);
+        var UpdateQuery = "UPDATE fit SET fitJson = '" + JSON.stringify(data) + "' WHERE fitName = '" + data['FitName'] + "';";
+        connection.query(UpdateQuery, function (error, results, fields) {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            if (results['affectedRows'] == 0) {
+                var InsertQuery = "INSERT INTO fit VALUES('" + data['FitName'] + "', '" + JSON.stringify(data) + "', '" + t3 + "');";
+                connection.query(InsertQuery, function (error, results, fields) {
+                    if (error) {
+                        console.error(error);
+                        return;
+                    }
+                    for (var i = 0; i < 1000; i++) {
+                        if (i == 999) {
+                            console.log('sending 200 status');
+                            res.end(JSON.stringify({
+                                response: '200'
+                            }));
+                        }
+                    }
+                });
+            } else {
+                for (var i = 0; i < 1000; i++) {
+                    if (i == 999) {
+                        console.log('sending 200 status');
+                        res.end(JSON.stringify({
+                            response: '200'
+                        }));
+                    }
+                }
+            }
+        });
+    });
+}
+
+function DeleteFit(req, res) {
+    var fits = req.body.delFit.split(',');
+    var DeleteQuery = "DELETE FROM fit WHERE";
+    for (var i = 0; i < fits.length; i++) {
+        if (i == (fits.length - 1)) {
+            DeleteQuery += " fitName = '" + fits[i].trim() + "';";
+        }else{
+            DeleteQuery += " fitName = '" + fits[i].trim() + "' OR";
+        }
+    }
+    connection.query(DeleteQuery, function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return;
+        }
+        console.log(results);
+        for (var i = 0; i < 1000; i++) {
+            if (i == 999) {
+                console.log('sending 200 status');
+                res.end(JSON.stringify({
+                    response: '200'
+                }));
+            }
+        }
+    });
 }

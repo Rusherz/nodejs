@@ -117,6 +117,12 @@ app.get('/skill', function (req, res) {
     });
 });
 
+app.get('/switchchar', function(req, res){
+    req.session.admin = false;
+    req.session.refresh_token = null;
+    res.redirect('/');
+});
+
 app.get('/callback', function (req, res) {
     if (req.session.refrresh_token == null)
         req.session.code = req.query.code;
@@ -206,6 +212,11 @@ function HtmlString(callback) {
             console.error(error);
             return;
         }
+        if (results.length == 0) {
+            var htmlstring = '<center><h2>No fits currently added.</h2></center>';
+            html.push(htmlstring);
+            callback(html);
+        }
         for (var i = 0; i < results.length; i++) {
             fits.push(JSON.parse(results[i]['fitJson']));
             if (i == (results.length - 1)) {
@@ -253,7 +264,8 @@ function HtmlString(callback) {
                             return;
                         }
 
-                        var htmlstring = '<div data-role="collapsible">';
+                        var htmlstring = '<div class="col-sm-6">'
+                            htmlstring += '<div data-role="collapsible">';
                         htmlstring += '<h4>' + fit.FitName + '</h4>';
                         htmlstring += '<ul data-role="listview">';
                         StringFormat(results, fit.ShipName, function (data) {
@@ -298,7 +310,7 @@ function HtmlString(callback) {
                                 });
                             });
                         }
-                        htmlstring += '</ul></div>';
+                        htmlstring += '</ul></div></div>';
                         html.push(htmlstring);
                         if (html.length == fits.length) {
                             callback(html);

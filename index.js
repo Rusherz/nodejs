@@ -46,7 +46,7 @@ app.get('/', function (req, res) {
     req.session.admin = false;
     // PRODUCTION URL
     res.redirect('https://login.eveonline.com/oauth/authorize/?response_type=code' +
-        '&redirect_uri=http://auth.sudden-impact.online/callback&client_id=377645b262b34c87a68bce8963ae2847' +
+        '&redirect_uri=http://auth.sudden-impact.online:3000/callback&client_id=377645b262b34c87a68bce8963ae2847' +
         '&scope=esi-skills.read_skills.v1&state=uniquestate123');
     // DEV URL
     /*res.redirect('https://login.eveonline.com/oauth/authorize/?response_type=code' +

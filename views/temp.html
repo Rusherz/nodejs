@@ -1,0 +1,47 @@
+var code = req.session.code;
+    var options = {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Basic ' + new Buffer('377645b262b34c87a68bce8963ae2847:LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf').toString('base64'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Host': 'login.eveonline.com'
+        },
+        url: 'https://login.eveonline.com/oauth/token',
+        body: 'grant_type=authorization_code&code=' + code
+    }
+    MakeRequest(options, function (body) {
+
+        var access_token = JSON.parse(body)['access_token'];
+        console.log(access_token);
+        var options = {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'rusherz ieatrusherz34@gmail.com',
+                'Authorization': 'Bearer ' + access_token,
+                'Host': 'login.eveonline.com'
+            },
+            url: 'https://login.eveonline.com/oauth/verify'
+        }
+        MakeRequest(options, function (body) {
+
+            var charID = JSON.parse(body)['CharacterID'];
+            console.log(charID);
+            var options = {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'rusherz ieatrusherz34@gmail.com',
+                    'Authorization': 'Bearer ' + access_token,
+                    'Accept': 'application/json',
+                    'Host': 'esi.tech.ccp.is'
+                },
+                url: 'https://esi.tech.ccp.is/latest/characters/' + charID + '/skills/'
+            }
+            MakeRequest(options, function (body) {
+
+                var skills = JSON.parse(body)['skills'];
+                skillList = skills
+                //res.render('skills');
+                res.redirect('/skills');
+            });
+        });
+    });

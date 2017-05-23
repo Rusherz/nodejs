@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'authserver',
+    user: 'allianceserver',
+    password: '5LAP_ALLIANCE_SERVER_MYSQL',
     database: 'eve'
 });
 var app = express();

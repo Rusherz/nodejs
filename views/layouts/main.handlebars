@@ -4,40 +4,38 @@
 <head>
     <meta charset="utf-8">
     <title>Skill Check</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel="stylesheet" href="/bootstrap/bootstrap.css">
-    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="/css/jquery.mobile-1.4.5.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/jquery.mobile-1.4.5.css">
+    <link rel="stylesheet" href="/bootstrap/bootstrap.css">
 </head>
 
-<body style="height: 100%; width: 100%; background-color: #333333">
-    <nav id="navHeader" class="navbar navbar-fixed-top navbar-default">
-        <div class="bs-component">
-            <div class="container-fluid">
-                <div class="navbar-header" style="padding-right: 20px">
-                    <a class="navbar-brand" href="#">Fit Checker</a>
-                </div>
+<body>
+        <nav id="navHeader" class="navbar navbar-fixed-top navbar-default">
+            <div class="bs-component">
+                <div class="container-fluid">
+                    <div class="navbar-header" style="padding-right: 20px">
+                        <a class="navbar-brand" href="#">Fit Checker</a>
+                    </div>
 
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="/Skill">Home</a></li>
-                        {{#if admin}}
-                        <li><a href="/fits">Admin</a></li>
-                        {{/if}}
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/SwitchChar">Switch Character</a></li>
-                    </ul>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/Skill">Home</a></li>
+                            {{#if admin}}
+                            <li><a href="/fits">Admin</a></li>
+                            {{/if}}
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/SwitchChar">Switch Character</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+        </nav>
+        <div style="margin: 3% 0px 0px 0px;">
+            {{{body}}}
         </div>
-    </nav>
-    <div style="margin: 3% 0px 0px 0px;">
-        {{{body}}}
-    </div>
 </body>
 
 </html>

@@ -1,47 +1,35 @@
-var code = req.session.code;
-    var options = {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Basic ' + new Buffer('377645b262b34c87a68bce8963ae2847:LNZsrtvVaSWzvkXjss3YRiSrhv7AIMhvJAfO58Gf').toString('base64'),
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Host': 'login.eveonline.com'
-        },
-        url: 'https://login.eveonline.com/oauth/token',
-        body: 'grant_type=authorization_code&code=' + code
-    }
-    MakeRequest(options, function (body) {
+<!doctype html>
+<html>
 
-        var access_token = JSON.parse(body)['access_token'];
-        console.log(access_token);
-        var options = {
-            method: 'GET',
-            headers: {
-                'User-Agent': 'rusherz ieatrusherz34@gmail.com',
-                'Authorization': 'Bearer ' + access_token,
-                'Host': 'login.eveonline.com'
-            },
-            url: 'https://login.eveonline.com/oauth/verify'
-        }
-        MakeRequest(options, function (body) {
+<head>
+    <meta charset="utf-8">
+    <title>Skill Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap/bootstrap.css">
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
 
-            var charID = JSON.parse(body)['CharacterID'];
-            console.log(charID);
-            var options = {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'rusherz ieatrusherz34@gmail.com',
-                    'Authorization': 'Bearer ' + access_token,
-                    'Accept': 'application/json',
-                    'Host': 'esi.tech.ccp.is'
-                },
-                url: 'https://esi.tech.ccp.is/latest/characters/' + charID + '/skills/'
-            }
-            MakeRequest(options, function (body) {
+<body>
+    <div class="col-sm-6">
+        <div data-role="collapsible">
+            <h4>Arazu fit</h4>
+            <ul data-role="listview" style="color: green; padding: 0px; margin: 0px"><span style="color: green;">
+                <li data-role="collapsible" style="color: green; padding: 0px; margin: 0px">
+                    <h6>Item: Arazu</h6>
+                    <ul data-role="listview" style="color: green;">
+                        <li>Skill Name: Gallente Cruiser</li>
+                        <li>Skill level needed: 5</li>
+                        <li>Skill Name: Recon Ships</li>
+                        <li>Skill level needed: 1</li>
+                    </ul>
+                </li></span>
+            </ul>
+        </div>
+    </div>
+</body>
 
-                var skills = JSON.parse(body)['skills'];
-                skillList = skills
-                //res.render('skills');
-                res.redirect('/skills');
-            });
-        });
-    });
+</html>

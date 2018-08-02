@@ -1,6 +1,6 @@
 version: "2"
 services:
-  api:
+  web_api:
     container_name: api
     restart: always
     build: ./api
@@ -9,7 +9,7 @@ services:
     volumes:
       - ./api:/usr/src/api
     command: nodemon index.js
-  mongo:
+  web_mongo:
     container_name: mongo
     restart: always
     build: ./mongo

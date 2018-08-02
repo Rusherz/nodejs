@@ -1,0 +1,83 @@
+let request = require('request');
+let cheerio = require('cheerio');
+let db = require('./dbFunctions');
+let matches = new Array();
+let getMatchesCB = false;
+let getAllMatchInfoCB = false;
+
+module.exports = {
+    'getAllMatchInfo': (callback) => {
+        let count = 0;
+        for (let match of matches) {
+            if (match['homeTeam'] == '' && match['awayTeam'] == '') continue;
+            let options = {
+                uri: 'https://vrmasterleague.com/Services.asmx/GetMatchSets',
+                form: {
+                    encrValue: match['matchSet']
+                }
+            }
+            request.post(options, function (err, res, body) {
+                let maps = JSON.parse(body.substring(body.indexOf('['), body.indexOf(']') + 1));
+                for (let map_index in maps) {
+                    match['map' + (parseInt(map_index) + 1)] = {
+                        mapName: maps[map_index]['Map'],
+                        scoreHome: maps[map_index]['ScoreHome'],
+                        scoreAway: maps[map_index]['ScoreAway']
+                    }
+                }
+                db.insertOneMatch(match, function () {
+                    count++;
+                    if (count = matches.length - 1) {
+                        if (!getAllMatchInfoCB) {
+                            getAllMatchInfoCB = true;
+                            callback()
+                        }
+                    }
+                });
+            });
+        }
+    },
+    'getMatches': (callback) => {
+        request.get('https://vrmasterleague.com/Onward/Matches.aspx', function (err, res, body) {
+            let $ = cheerio.load(body);
+            let string = ''
+            let count = 0;
+            let num_matches = $('#MatchesRecent_MatchesNode .matches_table tr').length;
+            $('#MatchesRecent_MatchesNode .matches_table tr').each((index, element) => {
+                let date = '';
+                let homeTeam = '';
+                let awayTeam = '';
+                let matchSet = '';
+                $(element).find('td').each((i, elm) => {
+                    switch (i) {
+                        case 0:
+                            date = new Date($(elm).children().first().text()).toUTCString();
+                        case 2:
+                            homeTeam = $(elm).children().last().text()
+                            break;
+                        case 3:
+                            let matchSetString = $(elm).children().first().attr('onclick').toString();
+                            matchSet = matchSetString.substring(matchSetString.indexOf('"') + 1, matchSetString.lastIndexOf('"'))
+                            break;
+                        case 4:
+                            awayTeam = $(elm).children().first().text()
+                            break;
+                    }
+                });
+                matches.push({
+                    date: date,
+                    homeTeam: homeTeam,
+                    awayTeam: awayTeam,
+                    matchSet: matchSet
+                });
+                count++;
+                if (count == num_matches - 1) {
+                    if (!getMatchesCB) {
+                        getMatchesCB = true;
+                        callback();
+                    }
+                }
+            });
+        });
+    }
+}

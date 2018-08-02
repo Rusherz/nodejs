@@ -1,0 +1,20 @@
+version: "2"
+services:
+  api:
+    container_name: api
+    restart: always
+    build: ./api
+    ports:
+      - "80:4000"
+    volumes:
+      - ./api:/usr/src/api
+    command: nodemon index.js
+  mongo:
+    container_name: mongo
+    restart: always
+    build: ./mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - /data/db:/data/db
+    command: mongod --bind_ip 0.0.0.0

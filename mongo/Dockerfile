@@ -78,6 +78,6 @@ RUN set -x \
 
 RUN mkdir -p /data/db /data/configdb \
 	&& chown -R mongodb:mongodb /data/db /data/configdb
-VOLUME /data/db /data/db
+VOLUME ./data/db /data/db
 
 EXPOSE 27017

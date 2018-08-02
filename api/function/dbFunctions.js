@@ -17,7 +17,7 @@ module.exports = {
             callback();
         });
     },
-    'findOneTeam': (teamName, callback) => {
+    'findAllTeamMatches': (teamName, callback) => {
         Match.find({
             $or: [{
                 'homeTeam': teamName
@@ -25,6 +25,20 @@ module.exports = {
                 'awayTeam': teamName
             }],
         }).select('-_id -__v').then(data => {
+            callback(data);
+        })
+    },
+    'findOneMatch': (teamA, teamB, callback) => {
+        Match.find({
+            $or: [{
+                'homeTeam': teamA,
+                'awayTeam': teamB
+            },
+            {
+                'homeTeam': teamB,
+                'awayTeam': teamA
+            }]
+        }).select(-_id -__v).then( data => {
             callback(data);
         })
     }

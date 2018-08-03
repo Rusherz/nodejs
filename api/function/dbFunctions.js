@@ -4,11 +4,6 @@ const Match = require('../models/Match');
 const Team = require('../models/Team');
 
 let MatchFunctions = {
-    'getTeamNames': (callback) => {
-        Match.find().select('-_id -__v -date -map1 -map2 -map3').then(data => {
-            callback(data);
-        })
-    },
     'insertOneMatch': (match, callback) => {
         Match.find({
             'date': match['date'],
@@ -89,7 +84,7 @@ let TeamFunctions = {
         });
     },
     'findOneTeam': (teamName, callback) => {
-        Team.find({
+        Team.findOne({
             "team": teamName
         }).select('-_id -__v').then(data => {
             callback(data);

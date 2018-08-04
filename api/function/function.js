@@ -25,12 +25,42 @@ module.exports = {
                         scoreAway: maps[map_index]['ScoreAway']
                     }
                 }
-                db.insertOneMatch(match, function () {
-                    count++;
-                    if (count = matches.length - 1) {
-                        if (!getAllMatchInfoCB) {
-                            getAllMatchInfoCB = true;
-                            callback()
+                db.MatchFunctions.insertOneMatch(match, function (inserted) {
+                    if (inserted) {
+                        for (let i = 1; i < 4; i++) {
+                            let homeTeamMap = {
+                                teamName: match['homeTeam'],
+                                map: match['map' + i]['mapName'].toLowerCase().split(" ")[0],
+                                roundsWon: match['map' + i]['scoreHome'],
+                                roundsLoss: match['map' + i]['scoreAway']
+                            }
+                            let awayTeamMap = {
+                                teamName: match['awayTeam'],
+                                map: match['map' + i]['mapName'].toLowerCase().split(" ")[0],
+                                roundsWon: match['map' + i]['scoreAway'],
+                                roundsLoss: match['map' + i]['scoreHome']
+                            }
+                            db.TeamFunctions.updateOneMap(homeTeamMap, function () {
+                                db.TeamFunctions.updateOneMap(awayTeamMap, function () {
+                                    if (i == 3) {
+                                        count++;
+                                        if (count = matches.length - 1) {
+                                            if (!getAllMatchInfoCB) {
+                                                getAllMatchInfoCB = true;
+                                                callback()
+                                            }
+                                        }
+                                    }
+                                })
+                            })
+                        }
+                    } else {
+                        count++;
+                        if (count = matches.length - 1) {
+                            if (!getAllMatchInfoCB) {
+                                getAllMatchInfoCB = true;
+                                callback()
+                            }
                         }
                     }
                 });

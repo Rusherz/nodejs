@@ -12,10 +12,23 @@ let MatchFunctions = {
         }).then(data => {
             if (data.length == 0) {
                 new Match(match).save().then(matchData => {
-
+                    callback(true);
                 });
+            } else {
+                callback(false);
             }
-            callback();
+        });
+    },
+    'updateLastDate': (callback) => {
+        console.log('updating date');
+        Match.updateOne({
+            "_id": "5b64ba4fe0e7bdff24546a46"
+        }, {
+            "_id": "5b64ba4fe0e7bdff24546a46",
+            "DATE": new Date().toUTCString()
+        }, function (err, data) {
+            console.log('Calling callback', data);
+            callback(data);
         });
     },
     'findAllMatches': (callback) => {
@@ -83,6 +96,11 @@ let TeamFunctions = {
             callback();
         });
     },
+    'findAllTeams': (callback) => {
+        Team.find().select('-_id -__v').then(data => {
+            callback(data);
+        })
+    },
     'findOneTeam': (teamName, callback) => {
         Team.findOne({
             "team": teamName
@@ -90,8 +108,21 @@ let TeamFunctions = {
             callback(data);
         });
     },
+    'findTwoTeams': (teamNames, callback) => {
+        Team.find({
+            $or: [{
+                    'team': teamNames[0]
+                },
+                {
+                    'team': teamNames[1]
+                }
+            ]
+        }).select('-_id -__v').then(data => {
+            callback(data);
+        })
+    },
     'updateOneMap': (mapData, callback) => {
-        if(mapData['map'] != 'other'){
+        if (mapData['map'] != 'other') {
             let update = {}
             update[mapData['map'] + '.rounds.win'] = mapData['roundsWon'];
             update[mapData['map'] + '.rounds.loss'] = mapData['roundsLoss'];
@@ -107,10 +138,10 @@ let TeamFunctions = {
             }, {
                 $inc: update
             }).then(data => {
-                if(!data['ok']) console.log(mapData)
+                if (!data['ok']) console.log(mapData)
                 callback();
             })
-        }else{
+        } else {
             callback();
         }
     }

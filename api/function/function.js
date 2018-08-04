@@ -1,12 +1,14 @@
 let request = require('request');
 let cheerio = require('cheerio');
-let db = require('./dbFunctions');
+let MatchFunctions = require('./MatchFunctions');
+let TeamFunctions = require('./TeamFunctions');
 let matches = new Array();
 let getMatchesCB = false;
 let getAllMatchInfoCB = false;
 
 module.exports = {
     'getAllMatchInfo': (callback) => {
+        getAllMatchInfoCB = false;
         let count = 0;
         for (let match of matches) {
             if (match['homeTeam'] == '' && match['awayTeam'] == '') continue;
@@ -25,7 +27,7 @@ module.exports = {
                         scoreAway: maps[map_index]['ScoreAway']
                     }
                 }
-                db.MatchFunctions.insertOneMatch(match, function (inserted) {
+                MatchFunctions.insertOneMatch(match, function (inserted) {
                     if (inserted) {
                         for (let i = 1; i < 4; i++) {
                             let homeTeamMap = {
@@ -40,8 +42,8 @@ module.exports = {
                                 roundsWon: match['map' + i]['scoreAway'],
                                 roundsLoss: match['map' + i]['scoreHome']
                             }
-                            db.TeamFunctions.updateOneMap(homeTeamMap, function () {
-                                db.TeamFunctions.updateOneMap(awayTeamMap, function () {
+                            TeamFunctions.updateOneMap(homeTeamMap, function () {
+                                TeamFunctions.updateOneMap(awayTeamMap, function () {
                                     if (i == 3) {
                                         count++;
                                         if (count = matches.length - 1) {
@@ -68,6 +70,7 @@ module.exports = {
         }
     },
     'getMatches': (callback) => {
+        getMatchesCB = false;
         request.get('https://vrmasterleague.com/Onward/Matches.aspx', function (err, res, body) {
             let $ = cheerio.load(body);
             let string = ''
@@ -94,12 +97,14 @@ module.exports = {
                             break;
                     }
                 });
-                matches.push({
-                    date: date,
-                    homeTeam: homeTeam,
-                    awayTeam: awayTeam,
-                    matchSet: matchSet
-                });
+                if (homeTeam != '' && awayTeam != '' && date != '' && matchSet != '') {
+                    matches.push({
+                        date: date,
+                        homeTeam: homeTeam,
+                        awayTeam: awayTeam,
+                        matchSet: matchSet
+                    });
+                }
                 count++;
                 if (count == num_matches - 1) {
                     if (!getMatchesCB) {

@@ -7,19 +7,19 @@
     </div>
     <div class="col s12 m8">
       <button class="btn" (click)="updateData()">Grab new matches</button>
-      <button class="btn-flat" disabled>Last grabbed on Tues. July 29th 2018</button>
+      <button class="btn-flat" disabled>Last grabbed on {{ date | date:'medium' }}</button>
     </div>
   </div>
   <div class="col s12 input-field">
-    <select [(ngModel)]="teamOne" name="teamOne" style="display: block">
+    <select [(ngModel)]="teamOne" (change)="getChartData()" name="teamOne" style="display: block">
       <option selected [value]=undefined>Select a scope</option>
       <option *ngFor="let teamName of teamNames" [ngValue]="teamName">{{teamName}}</option>
     </select>
-    <select [(ngModel)]="teamTwo" name="teamTwo" style="display: block">
+    <select [(ngModel)]="teamTwo" (change)="getChartData()" name="teamTwo" style="display: block">
       <option selected [value]=undefined>Select a scope</option>
       <option *ngFor="let teamName of teamNames" [ngValue]="teamName">{{teamName}}</option>
     </select>
-    <select [(ngModel)]="roundsMaps" name="teamTwo" style="display: block">
+    <select [(ngModel)]="roundsMaps" (change)="getChartData()" name="teamTwo" style="display: block">
       <option selected value="rounds">Rounds Won</option>
       <option value="maps">Maps Won</option>
     </select>

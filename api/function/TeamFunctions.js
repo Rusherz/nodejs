@@ -3,9 +3,9 @@ let db = require('../config/db');
 const Team = require('../models/Team'); */
 
 let TeamFunctions = {
-    'getTeamNames': (callback) => {
+    'getTeamNames': (season, callback) => {
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'teams',
             query: {},
             filters: {
@@ -15,9 +15,9 @@ let TeamFunctions = {
             callback(data);
         })
     },
-    'insertOneTeam': (teamName, callback) => {
+    'insertOneTeam': (season, teamName, callback) => {
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'teams',
             query: {
                 "team": teamName
@@ -25,21 +25,23 @@ let TeamFunctions = {
             filters: {}
         }, function (data) {
             if (data.length == 0) {
-                Team['team'] = teamName;
+                let team = {};
+                Object.assign(team, Team);
+                team['team'] = teamName;
                 db.insertOne({
-                    database: 'matches',
+                    database: season,
                     collection: 'teams',
                     query: {},
                     filters: {}
-                }, Team, function(result){
+                }, team, function(result){
                     callback();
                 })
             }
         });
     },
-    'findAllTeams': (callback) => {
+    'findAllTeams': (season, callback) => {
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'teams',
             query: {},
             filters: {
@@ -50,9 +52,9 @@ let TeamFunctions = {
             callback(data);
         });
     },
-    'findOneTeam': (teamName, callback) => {
+    'findOneTeam': (season, teamName, callback) => {
         db.findOne({
-            database: 'matches',
+            database: season,
             collection: 'teams',
             query: {
                 "team": teamName
@@ -62,9 +64,9 @@ let TeamFunctions = {
             callback(data);
         });
     },
-    'findTwoTeams': (teamNames, callback) => {
+    'findTwoTeams': (season, teamNames, callback) => {
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'teams',
             query: {
                 $or: [{
@@ -83,7 +85,7 @@ let TeamFunctions = {
             callback(data);
         });
     },
-    'updateOneMap': (mapData, callback) => {
+    'updateOneMap': (season, mapData, callback) => {
         if (mapData['map'] != 'other') {
             let update = {}
             update[mapData['map'] + '.rounds.win'] = mapData['roundsWon'];
@@ -96,12 +98,10 @@ let TeamFunctions = {
                 update[mapData['map'] + '.maps.loss'] = 1;
             }
             db.updateOne({
-                database: 'matches',
+                database: season,
                 collection: 'teams',
                 query: {
-                    'date': match['date'],
-                    'homeTeam': match['homeTeam'],
-                    'awayTeam': match['awayTeam']
+                    'team': mapData['teamName']
                 },
                 filters: {}
             }, {

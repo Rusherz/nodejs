@@ -4,9 +4,9 @@ const Match = require('../models/Match'); */
 const date_id = "5b64ba4fe0e7bdff24546a46";
 
 let MatchFunctions = {
-    'insertOneMatch': (match, callback) => {
+    'insertOneMatch': (season, match, callback) => {
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'matches',
             query: {
                 'date': match['date'],
@@ -17,7 +17,7 @@ let MatchFunctions = {
         }, function (data) {
             if (data.length == 0) {
                 db.insertOne({
-                    database: 'matches',
+                    database: season,
                     collection: 'matches',
                     query: {},
                     filters: {}
@@ -29,9 +29,9 @@ let MatchFunctions = {
             }
         });
     },
-    'updateLastDate': (callback) => {
+    'updateLastDate': (season, callback) => {
         db.updateOne({
-            database: 'matches',
+            database: season,
             collection: 'matches',
             query: {
                 type: "date"
@@ -48,9 +48,9 @@ let MatchFunctions = {
                 callback(data);
             })
     },
-    'getLastUpdated': (callback) => {
+    'getLastUpdated': (season, callback) => {
         db.findOne({
-            database: 'matches',
+            database: season,
             collection: 'matches',
             query: {
                 type: "date"
@@ -63,9 +63,10 @@ let MatchFunctions = {
             callback(data);
         })
     },
-    'findAllMatches': (callback) => {
+    'findAllMatches': (season, callback) => {
+        console.log("HERE :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
         db.find({
-            database: 'matches',
+            database: season,
             collection: 'matches',
             query: {},
             filters: {

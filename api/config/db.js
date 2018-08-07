@@ -1,11 +1,12 @@
 const MongoClient = require('mongodb').MongoClient;
 
-var url = "mongodb://web_mongo:27017/matches";
+var url = "mongodb://web_mongo:27017/";
 
 module.exports = {
     'find': (db_params, callback) => {
         MongoClient.connect(url, function (err, db) {
             if (err) throw err;
+            console.log(db_params['database'])
             var dbo = db.db(db_params['database']);
             dbo.collection(db_params['collection']).find(db_params['query'], db_params['filters']).toArray(function (err, result) {
                 if (err) throw err;
@@ -29,7 +30,7 @@ module.exports = {
         MongoClient.connect(url, function (err, db) {
             if (err) throw err;
             var dbo = db.db(db_params['database']);
-            dbo.collection(db_params['collection']).insertOne(document, function (err, res) {
+            dbo.collection(db_params['collection']).insertOne(document, function (err, result) {
                 if (err) throw err;
                 db.close();
                 callback(result);
@@ -40,7 +41,7 @@ module.exports = {
         MongoClient.connect(url, function (err, db) {
             if (err) throw err;
             var dbo = db.db(db_params['database']);
-            dbo.collection(db_params['collection']).insertMany(documents, function (err, res) {
+            dbo.collection(db_params['collection']).insertMany(documents, function (err, result) {
                 if (err) throw err;
                 db.close();
                 callback(result);

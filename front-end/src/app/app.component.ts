@@ -17,6 +17,10 @@ export class AppComponent {
 	public TeamNames: string[] = [];
 	public roundsMaps: string = 'rounds';
 	public date: Date;
+	public season_url: string = undefined;
+	public data_string: string = 'Get Older Data';
+	public data_loading: boolean = false;
+	public season: string = 'season_5_2018';
 
 	private url: string = '';
 
@@ -25,10 +29,10 @@ export class AppComponent {
 	}
 
 	ngOnInit() {
-		this.http.get(this.url + ':4000/getLastUpdated').subscribe(data => {
+		this.http.get(this.url + ':4000/getLastUpdated?season=' + this.season).subscribe(data => {
 			this.date = new Date(data['DATE']);
 		})
-		this.http.get(this.url + ':4000/allTeamNames').subscribe((teamNames: Object[]) => {
+		this.http.get(this.url + ':4000/allTeamNames?season=' + this.season).subscribe((teamNames: Object[]) => {
 			for (let teamName of teamNames) {
 				this.teamNames.push(teamName['team'])
 			}
@@ -44,20 +48,49 @@ export class AppComponent {
 		if (this.teamTwo && this.teamTwo != 'undefined') {
 			this.TeamNames.push(this.teamTwo)
 		}
-		this.http.post(this.url + ':4000/chartwinloss', { 'teamNames': this.TeamNames, 'roundsMaps': this.roundsMaps }).subscribe(data => {
+		this.http.post(this.url + ':4000/chartwinloss', {'season': this.season, 'teamNames': this.TeamNames, 'roundsMaps': this.roundsMaps }).subscribe(data => {
 			this.chart.data.datasets = data;
+			if (this.data_loading) {
+				this.data_loading = false;
+				this.data_string = 'Get Older Data';
+				this.season_url = undefined;
+			}
+			if (this.TeamNames.length > 1 && this.TeamNames.length != 0) {
+				this.chart.options.legend.display = true;
+			} else {
+				this.chart.options.legend.display = false;
+			}
 			this.chart.update();
 		});
 	}
 
 	updateData() {
-		this.http.get(this.url + ':4000').subscribe(data => {
+		this.http.get(this.url + ':4000?season=' + this.season).subscribe(data => {
 			this.date = new Date(data['DATE']);
+			this.getChartData();
 		});
 	}
 
+	getOlderData() {
+		this.data_loading = true;
+		this.data_string = 'Loading...';
+		this.http.post(this.url + ':4000/seasonData', {
+			'season': this.season,
+			seasonUrl: this.season_url
+		}).subscribe(data => {
+			if (data['result'] == 'done') {
+				if (this.data_loading) {
+					this.data_loading = false;
+					this.data_string = 'Get Older Data';
+					this.season_url = undefined;
+				}
+				//this.updateData();
+			}
+		})
+	}
+
 	initChart() {
-		this.http.post(this.url + ':4000/chartwinloss', { 'teamNames': this.TeamNames, 'roundsMaps': 'rounds' }).subscribe(data => {
+		this.http.post(this.url + ':4000/chartwinloss', {'season': this.season, 'teamNames': this.TeamNames, 'roundsMaps': 'rounds' }).subscribe(data => {
 			this.chart = undefined;
 			let canvas = <HTMLCanvasElement>document.getElementById("canvas");
 			let ctx = canvas.getContext("2d");
